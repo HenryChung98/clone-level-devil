@@ -17,7 +17,7 @@ class Player:
         self.is_jump = False
         self.v = VELOCITY
         self.m = MASS
-        self.gravity = 30
+        self.gravity = 10
 
     def draw(self, screen):
         screen.blit(self.texture, self.pos)

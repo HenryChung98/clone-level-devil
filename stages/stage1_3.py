@@ -9,32 +9,37 @@ from classes.trap import Trap
 from classes.door import Door
 from classes.button import Button
 
-import stages.stage4 as stage4
+import stages.stage1_4 as stage1_4
 
 
 def run():
-# pygame setup
-    pygame.init()
 
+    # setup
+    pygame.init()
     clock = pygame.time.Clock()
     running = True
-
     ground = SCREEN_HEIGHT
-# --------------------------------------------------------------------
+
     player = Player(SCREEN_WIDTH / 3 - 30, SCREEN_HEIGHT / 2 - 45, player_size)
     door = Door(SCREEN_WIDTH / 3 * 2 + 30, SCREEN_HEIGHT / 2 - 50, door_size)   
-    next_btn = Button('Next Stage', SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT / 2 - 50, 70, 50, stage4.run)
-
+    next_btn = Button('Next Stage', SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT / 2 - 50, 70, 50, stage1_4.run)
     wall = Wall(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, WHITE)
-    
     traps = [
         Trap(SCREEN_WIDTH / 3 + 30, SCREEN_HEIGHT / 2 - 20, trap_w, trap_h, RED),
         Trap(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 20, trap_w, trap_h, RED),
         Trap(SCREEN_WIDTH / 3 * 2 - 30, SCREEN_HEIGHT / 2 - 20, trap_w, trap_h, RED)
     ]
 
+
     while running:
+        screen.fill(BLACK)
+
+        # cheat
+        # if ground == SCREEN_HEIGHT:
+        #     player.is_jump = True
         
+
+        # key event
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -61,29 +66,17 @@ def run():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 next_btn.check_click(event.pos)   
+                print(event.pos)
 
-        screen.fill(BLACK)
 
-
+        # set ground to walls pos y
         if player.pos[0] >= wall.pos[0] and player.pos[0] <= wall.pos[0] + wall.w:
             ground = wall.h
         else:
             ground = SCREEN_HEIGHT
 
 
-# --------------------------------------------------------------------
 
-        # initialize
-        player.draw(screen)
-        player.move_x()
-        player.update(ground)
-
-        wall.draw(screen)
-
-        door.draw(screen)
-        
-        for trap in traps:
-            trap.draw(screen)
 
 #-------------------------------------------------wall collision
         if player.rect.colliderect(wall.rect):
@@ -93,8 +86,11 @@ def run():
         else:
             wall.color = WHITE
 
+#-------------------------------------------------wall collision
+
 
 #-------------------------------------------------trap collision
+
         player_dead = False
 
         for trap in traps:
@@ -112,14 +108,23 @@ def run():
             time.sleep(0.5)
             run()
 
+#-------------------------------------------------trap collision
 
 
-#-------------------------------------------------door collision 
+        # door collision 
         if player.pos[0] >= door.pos[0] and player.pos[0] <= door.pos[0] + door_size:
             next_btn.draw(screen)
             
+        # draw
+        player.draw(screen)
+        door.draw(screen)
+        wall.draw(screen)
+        for trap in traps:
+            trap.draw(screen)
 
-
+        # update
+        player.move_x()
+        player.update(ground)
         pygame.display.flip()
 
         clock.tick(60) 

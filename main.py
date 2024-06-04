@@ -4,9 +4,9 @@ from variables import *
 
 from classes.button import Button
 
-import stages.stage1 as stage1
-import stages.stage2 as stage2
-import stages.stage3 as stage3
+import stages.stage1_1 as stage1_1
+import stages.stage1_2 as stage1_2
+import stages.stage1_3 as stage1_3
 
 
 # pygame setup
@@ -15,9 +15,9 @@ clock = pygame.time.Clock()
 running = True
 
 # button
-stage1_btn = Button('Stage 1', 100, 100, 50, 50, stage1.run)
-stage2_btn = Button('Stage 2', 200, 100, 50, 50, stage2.run)
-stage3_btn = Button('Stage 3', 300, 100, 50, 50, stage3.run)
+stage1_btn = Button('Stage 1', 100, 100, 50, 50, stage1_1.run)
+stage2_btn = Button('Stage 2', 200, 100, 50, 50, stage1_2.run)
+stage3_btn = Button('Stage 3', 300, 100, 50, 50, stage1_3.run)
 
 # loop
 while running:
