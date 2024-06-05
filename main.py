@@ -14,10 +14,48 @@ pygame.init()
 clock = pygame.time.Clock()
 running = True
 
+
+#------------------------------------------------- check opened stages
+opened_stages = []
+
+try:
+    with open('opened-stages.txt', 'r') as file:
+        lines = file.readlines()
+        for line in lines:
+            check_num = []
+            for i in line:
+                try:
+                    if int(i):
+                        check_num.append(i)
+                except:
+                    continue
+            
+            combined = ""
+            for i in check_num:
+                combined += i
+
+            opened_stages.append(int(combined))
+
+except:
+    with open('opened-stages.txt', 'w') as file:
+        file.write("1\n")
+
+#------------------------------------------------- check opened stages
+
 # button
-stage1_btn = Button('Stage 1', 100, 100, 50, 50, stage1_1.run)
-stage2_btn = Button('Stage 2', 200, 100, 50, 50, stage1_2.run)
-stage3_btn = Button('Stage 3', 300, 100, 50, 50, stage1_3.run)
+
+stage_btns = []
+button_details = {
+    1: ('Stage 1', 100, 100, 50, 50, stage1_1.run),
+    2: ('Stage 2', 200, 100, 50, 50, stage1_2.run),
+    3: ('Stage 3', 300, 100, 50, 50, stage1_3.run)
+}
+
+for stage in opened_stages:
+    if stage in button_details:
+        label, x, y, width, height, action = button_details[stage]
+        stage_btns.append(Button(label, x, y, width, height, action))
+
 
 # loop
 while running:
@@ -33,14 +71,12 @@ while running:
                 running = False
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            stage1_btn.check_click(event.pos)   
-            stage2_btn.check_click(event.pos)   
-            stage3_btn.check_click(event.pos)   
+            for button in stage_btns:
+                button.check_click(event.pos)  
 
     # draw buttons
-    stage1_btn.draw(screen)
-    stage2_btn.draw(screen) 
-    stage3_btn.draw(screen)
+    for button in stage_btns:
+        button.draw(screen)
 
     pygame.display.flip()
     clock.tick(60) 

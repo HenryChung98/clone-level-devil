@@ -48,7 +48,7 @@ def run():
                 if event.key == pygame.K_ESCAPE:
                     running = False
 
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_UP:
                     player.jump()
 
                 if event.key == pygame.K_LEFT:

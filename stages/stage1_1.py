@@ -11,6 +11,11 @@ from classes.button import Button
 import stages.stage1_2 as stage1_2
 
 
+arrow_up = pygame.image.load("imgs/up-arrow.png")
+arrow_right = pygame.image.load("imgs/right-arrow.png")
+arrow_left = pygame.image.load("imgs/left-arrow.png")
+
+
 def run():
 
     # setup
@@ -45,7 +50,7 @@ def run():
                 if event.key == pygame.K_ESCAPE:
                     running = False
 
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_UP:
                     if ground != SCREEN_HEIGHT and player.pos[1] <= SCREEN_HEIGHT / 3 * 2:
                         player.jump()
 
@@ -124,8 +129,12 @@ def run():
         door.draw(screen)
         for wall in walls:
             wall.draw(screen)
+            
+        screen.blit(arrow_up, (SCREEN_WIDTH / 2 - 32, SCREEN_HEIGHT / 4 * 3 - 64))
+        screen.blit(arrow_left, (SCREEN_WIDTH / 2 - 96, SCREEN_HEIGHT / 4 * 3))
+        screen.blit(arrow_right, (SCREEN_WIDTH / 2 + 32, SCREEN_HEIGHT / 4 * 3))
         
-        
+
         # update
         player.move_x()
         player.update(ground)

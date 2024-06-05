@@ -13,6 +13,23 @@ import stages.stage1_2 as stage1_2
 
 def run():
 
+#------------------------------------------------- check is opened
+
+    with open('opened-stages.txt', 'r') as file:
+        lines = file.readlines()
+        is_opened = False
+        for line in lines:
+            if line == "2\n":
+                is_opened = True
+                break
+        
+        if is_opened == False:
+            with open('opened-stages.txt', 'a') as file:
+                file.write("2\n")
+
+#------------------------------------------------- check is opened
+
+
     # setup
     pygame.init()
     clock = pygame.time.Clock()
@@ -46,7 +63,7 @@ def run():
                 if event.key == pygame.K_ESCAPE:
                     running = False
 
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_UP:
                     if ground != SCREEN_HEIGHT and player.pos[1] <= SCREEN_HEIGHT / 3 * 2:
                         player.jump()
 
@@ -92,13 +109,8 @@ def run():
             else:
                 walls[1].dx += 0.5
                 walls[1].move_x()
-            # if walls[2].pos[0] >= SCREEN_WIDTH / 2 + 75:
-            #     walls[2].pos[0] = SCREEN_WIDTH / 2 + 75
-            # else:
-            #     walls[2].dx += 0.5
-            #     walls[2].move_x()
         
-        if player.pos[0] >= 700:
+        if player.pos[0] >= 760:
             if walls[2].pos[0] >= 900:
                 walls[2].pos[0] = 900
             else:
