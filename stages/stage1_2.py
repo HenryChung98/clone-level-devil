@@ -49,7 +49,7 @@ def run():
         ]
     font = pygame.font.Font(None, 30)
     text = font.render("Press Spacebar to Move Next Stage", True, AQUA)
-    stage_num = font.render("1_2", True, AQUA)
+    stage_num = font.render("1-2", True, AQUA)
     text_rect = text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 7))
     stage_num_rect = stage_num.get_rect(center=(SCREEN_WIDTH / 2, 30))
     
@@ -148,17 +148,8 @@ def run():
                     player.pos[1] = wall.h - player.size - 5
 
 
-        player_dead = False
-
-
-        if player.pos[1] >= SCREEN_HEIGHT - player_size * 3:
-            player_dead = True
-
-
-        if player_dead:
-            player.texture = pygame.image.load("imgs/player-dead-img.png")
-            time.sleep(0.5)
-            run()
+        if player.pos[1] >= SCREEN_HEIGHT - player_size:
+            player.dead(run)
 #-------------------------------------------------wall collision
             
 

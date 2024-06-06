@@ -10,7 +10,7 @@ class Button:
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
-        font = pygame.font.Font(None, 20)
+        font = pygame.font.Font(None, 30)
         text_surf = font.render(self.text, True, WHITE) 
         text_rect = text_surf.get_rect(center=self.rect.center)
         screen.blit(text_surf, text_rect)

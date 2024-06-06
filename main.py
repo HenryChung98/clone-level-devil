@@ -9,6 +9,7 @@ import stages.stage1_2 as stage1_2
 import stages.stage1_3 as stage1_3
 import stages.stage1_4 as stage1_4
 import stages.stage1_5 as stage1_5
+import stages.stage2_1 as stage2_1
 
 def run():
     # pygame setup
@@ -48,11 +49,12 @@ def run():
 
     stage_btns = []
     button_details = {
-        1: ('Stage 1', 100, 100, 50, 50, stage1_1.run),
-        2: ('Stage 2', 200, 100, 50, 50, stage1_2.run),
-        3: ('Stage 3', 300, 100, 50, 50, stage1_3.run),
-        4: ('Stage 4', 400, 100, 50, 50, stage1_4.run),
-        5: ('Stage 5', 500, 100, 50, 50, stage1_5.run)
+        1: ('1 - 1', 100, 100, 50, 50, stage1_1.run),
+        2: ('1 - 2', 200, 100, 50, 50, stage1_2.run),
+        3: ('1 - 3', 300, 100, 50, 50, stage1_3.run),
+        4: ('1 - 4', 400, 100, 50, 50, stage1_4.run),
+        5: ('1 - 5', 500, 100, 50, 50, stage1_5.run),
+        6: ('2 - 1', 600, 100, 50, 50, stage2_1.run)
     }
 
     for stage in opened_stages:

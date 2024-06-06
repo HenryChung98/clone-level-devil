@@ -17,6 +17,22 @@ def run():
     back_btn_rect = back_btn.get_rect(center=(32, 32))
     is_clear = False
 
+#------------------------------------------------- check is opened
+
+    with open('opened-stages.txt', 'r') as file:
+        lines = file.readlines()
+        is_opened = False
+        for line in lines:
+            if line == "3\n":
+                is_opened = True
+                break
+        
+        if is_opened == False:
+            with open('opened-stages.txt', 'a') as file:
+                file.write("3\n")
+
+#------------------------------------------------- check is opened
+
     # setup
     pygame.init()
     clock = pygame.time.Clock()
@@ -27,11 +43,11 @@ def run():
     door = Door(SCREEN_WIDTH / 4 * 3 + 30, SCREEN_HEIGHT / 2 - 50, door_size)   
     walls = [
         Wall(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, WHITE),
-        Wall(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, WHITE)
+        Wall(SCREEN_WIDTH / 2 + 80, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2 + 80, SCREEN_HEIGHT / 2, WHITE)
         ]
     font = pygame.font.Font(None, 30)
     text = font.render("Press Spacebar to Move Next Stage", True, AQUA)
-    stage_num = font.render("1_3", True, AQUA)
+    stage_num = font.render("1-3", True, AQUA)
     text_rect = text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 7))
     stage_num_rect = stage_num.get_rect(center=(SCREEN_WIDTH / 2, 30))
     
@@ -93,15 +109,21 @@ def run():
 #------------------------------------------------- event
         
         # falling down
-        if player.pos[0] > 660 and player.pos[0] < 690 and player.pos[1] > 370:
+        if player.pos[0] > 440 and player.pos[0] < 700 and player.pos[1] > 370:
             player.dx = 0
 
         # walls move
-        if player.pos[0] >= SCREEN_WIDTH / 2 - 30:
-            if walls[1].pos[0] >= SCREEN_WIDTH / 2 + 70:
-                walls[1].pos[0] = SCREEN_WIDTH / 2 + 70
+        if player.pos[0] >= SCREEN_WIDTH / 2 - 200:
+            if walls[0].pos[0] <= -150:
+                walls[0].pos[0] = -150
             else:
-                walls[1].dx += 0.5
+                walls[0].dx -= 0.5
+                walls[0].move_x()
+            
+            if walls[1].pos[0] <= SCREEN_WIDTH / 2 - 60:
+                walls[1].pos[0] = SCREEN_WIDTH / 2 - 60
+            else:
+                walls[1].dx -= 0.5
                 walls[1].move_x()
 
 #------------------------------------------------- event
@@ -113,18 +135,8 @@ def run():
                 if player.is_jump == False:
                     player.pos[1] = wall.h - player.size - 5
 
-
-        player_dead = False
-
-
         if player.pos[1] >= SCREEN_HEIGHT - player_size:
-            player_dead = True
-
-
-        if player_dead:
-            player.texture = pygame.image.load("imgs/player-dead-img.png")
-            time.sleep(0.5)
-            run()
+            player.dead(run)
 #-------------------------------------------------wall collision
             
         # draw

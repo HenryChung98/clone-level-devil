@@ -1,7 +1,6 @@
 import pygame
 import sys
 import time
-import random
 from variables import *
 
 from classes.player import Player
@@ -40,7 +39,7 @@ def run():
         ]
     font = pygame.font.Font(None, 30)
     text = font.render("Press Spacebar to Move Next Stage", True, AQUA)
-    stage_num = font.render("1_1", True, AQUA)
+    stage_num = font.render("1-1", True, AQUA)
     text_rect = text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 7))
     stage_num_rect = stage_num.get_rect(center=(SCREEN_WIDTH / 2, 30))
     
@@ -123,7 +122,6 @@ def run():
             if player.rect.colliderect(wall.rect):
                 if player.is_jump == False:
                     player.pos[1] = wall.h - player.size - 5
-
 
 
         if player.pos[1] >= SCREEN_HEIGHT - player_size:

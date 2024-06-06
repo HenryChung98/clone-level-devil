@@ -5,14 +5,34 @@ from variables import *
 
 from classes.player import Player
 from classes.wall import Wall
-from classes.trap import Trap
 from classes.door import Door
 from classes.button import Button
 
-import stages.stage1_5 as stage1_5
+import stages.stage2_1 as stage2_1
+
 
 
 def run():
+    import main
+    back_btn = pygame.image.load("imgs/back.png")
+    back_btn_rect = back_btn.get_rect(center=(32, 32))
+    is_clear = False
+
+#------------------------------------------------- check is opened
+
+    with open('opened-stages.txt', 'r') as file:
+        lines = file.readlines()
+        is_opened = False
+        for line in lines:
+            if line == "5\n":
+                is_opened = True
+                break
+        
+        if is_opened == False:
+            with open('opened-stages.txt', 'a') as file:
+                file.write("5\n")
+
+#------------------------------------------------- check is opened
 
     # setup
     pygame.init()
@@ -20,20 +40,23 @@ def run():
     running = True
     ground = SCREEN_HEIGHT
 
-    player = Player(SCREEN_WIDTH / 3 - 30, SCREEN_HEIGHT / 2 - 45, player_size)
-    door = Door(SCREEN_WIDTH / 3 * 2 + 30, SCREEN_HEIGHT / 2 - 50, door_size)   
-    next_btn = Button('Next Stage', SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT / 2 - 50, 70, 50, stage1_5.run)
-    wall = Wall(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, WHITE)
-    traps = [
-        Trap(SCREEN_WIDTH / 3 + 30, SCREEN_HEIGHT / 2 - 20, trap_w, trap_h, RED),
-        Trap(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 20, trap_w, trap_h, RED),
-        Trap(SCREEN_WIDTH / 3 * 2 - 30, SCREEN_HEIGHT / 2 - 20, trap_w, trap_h, RED)
-    ]
-
-
+    player = Player(100, SCREEN_HEIGHT / 2 - 45, player_size)
+    door = Door(SCREEN_WIDTH / 4 * 3 + 30, SCREEN_HEIGHT / 2 - 50, door_size)   
+    walls = [
+        Wall(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2, WHITE),
+        Wall(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 130, SCREEN_HEIGHT / 2, WHITE),
+        Wall(SCREEN_WIDTH / 2 + 220, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2 - 220, SCREEN_HEIGHT / 2, WHITE)
+        ]
+    font = pygame.font.Font(None, 30)
+    text = font.render("Press Spacebar to Move Next Stage", True, AQUA)
+    stage_num = font.render("1-5", True, AQUA)
+    text_rect = text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 7))
+    stage_num_rect = stage_num.get_rect(center=(SCREEN_WIDTH / 2, 30))
+    
     while running:
         screen.fill(BLACK)
-        
+        screen.blit(stage_num, stage_num_rect.center)
+
         # cheat
         # if ground == SCREEN_HEIGHT:
         #     player.is_jump = True
@@ -49,12 +72,19 @@ def run():
                     running = False
 
                 if event.key == pygame.K_UP:
-                    player.jump()
+                    if ground != SCREEN_HEIGHT and player.pos[1] <= SCREEN_HEIGHT / 3 * 2:
+                        player.jump()
+                
+                if event.key == pygame.K_SPACE:
+                    if is_clear == True:
+                        stage2_1.run()
+
+
 
                 if event.key == pygame.K_LEFT:
-                    player.dx -= 2
+                    player.dx -= 3
                 if event.key == pygame.K_RIGHT:
-                    player.dx += 2
+                    player.dx += 3
 
 
             if event.type == pygame.KEYUP:
@@ -65,60 +95,62 @@ def run():
             
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                next_btn.check_click(event.pos)
+                if back_btn_rect.collidepoint(event.pos):
+                    running = False
+                    main.run()
                 print(event.pos)   
 
 
         # set ground to walls pos y
-        if player.pos[0] >= wall.pos[0] and player.pos[0] <= wall.pos[0] + wall.w:
-            ground = wall.h
+        if player.pos[0] >= walls[0].pos[0] and player.pos[0] <= walls[0].pos[0] + walls[0].w:
+            ground = walls[0].h
+        elif player.pos[0] >= walls[1].pos[0] and player.pos[0] <= walls[1].pos[0] + walls[1].w:
+            ground = walls[1].h
+
         else:
             ground = SCREEN_HEIGHT
 
+#------------------------------------------------- event
+        
+        # falling down
+        if player.pos[0] > 0 and player.pos[0] < SCREEN_WIDTH and player.pos[1] > 370:
+            player.dx = 0
 
+        # walls move
+        if player.pos[0] >= SCREEN_WIDTH / 2 - 300:
+            walls[0].dx += 0.1
+            walls[0].move_x()
+        
+
+#------------------------------------------------- event
 
 
 #-------------------------------------------------wall collision
-        if player.rect.colliderect(wall.rect):
-            
-            if player.is_jump == False:
-                player.pos[1] = wall.h - player.size - 5
-        else:
-            wall.color = WHITE
-
-
-#-------------------------------------------------trap collision
-        player_dead = False
-
-        for trap in traps:
-            if player.rect.colliderect(trap.rect):
-                player_dead = True
-                break
+        for wall in walls:
+            if player.rect.colliderect(wall.rect):
+                if player.is_jump == False:
+                    player.pos[1] = wall.h - player.size - 5
 
 
         if player.pos[1] >= SCREEN_HEIGHT - player_size:
-            player_dead = True
-
-
-        if player_dead:
-            player.texture = pygame.image.load("imgs/player-dead-img.png")
-            time.sleep(0.5)
-            run()
-
+            player.dead(run)
+            
+#-------------------------------------------------wall collision
+            
+        # draw
+        screen.blit(back_btn, back_btn_rect.topleft)
+        door.draw(screen)
+        player.draw(screen)
+        for wall in walls:
+            wall.draw(screen)
 
 
         # door collision 
         if player.pos[0] >= door.pos[0] and player.pos[0] <= door.pos[0] + door_size:
-            next_btn.draw(screen)
-            
-        
-        # update
-        door.draw(screen)
-        player.draw(screen)
-        wall.draw(screen)
-        for trap in traps:
-            trap.draw(screen)
-
+            is_clear = True
+            screen.blit(text, text_rect.topleft)
+        else:
+            is_clear = False
 
         # update
         player.move_x()
