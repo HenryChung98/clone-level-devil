@@ -1,6 +1,7 @@
 import pygame
 import sys
 import time
+import random
 from variables import *
 
 from classes.player import Player
@@ -11,12 +12,19 @@ from classes.button import Button
 import stages.stage1_2 as stage1_2
 
 
+
 arrow_up = pygame.image.load("imgs/up-arrow.png")
 arrow_right = pygame.image.load("imgs/right-arrow.png")
 arrow_left = pygame.image.load("imgs/left-arrow.png")
 
-
 def run():
+    import main
+    back_btn = pygame.image.load("imgs/back.png")
+    back_btn_rect = back_btn.get_rect(center=(32, 32))
+
+    is_clear = False
+
+    
 
     # setup
     pygame.init()
@@ -24,17 +32,21 @@ def run():
     running = True
     ground = SCREEN_HEIGHT
 
-    player = Player(SCREEN_WIDTH / 3 - 30, SCREEN_HEIGHT / 2 - 45, player_size)
-    door = Door(SCREEN_WIDTH / 3 * 2 + 30, SCREEN_HEIGHT / 2 - 50, door_size)   
-    next_btn = Button('Next Stage', SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT / 2 - 50, 70, 50, stage1_2.run)
+    player = Player(100, SCREEN_HEIGHT / 2 - 45, player_size)
+    door = Door(SCREEN_WIDTH / 4 * 3 + 30, SCREEN_HEIGHT / 2 - 50, door_size)   
     walls = [
-        Wall(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2, WHITE),
-        Wall(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2, WHITE)
+        Wall(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, WHITE),
+        Wall(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, WHITE)
         ]
-    
+    font = pygame.font.Font(None, 30)
+    text = font.render("Press Spacebar to Move Next Stage", True, AQUA)
+    stage_num = font.render("1_1", True, AQUA)
+    text_rect = text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 7))
+    stage_num_rect = stage_num.get_rect(center=(SCREEN_WIDTH / 2, 30))
     
     while running:
         screen.fill(BLACK)
+        screen.blit(stage_num, stage_num_rect.center)
 
         # cheat
         # if ground == SCREEN_HEIGHT:
@@ -53,6 +65,11 @@ def run():
                 if event.key == pygame.K_UP:
                     if ground != SCREEN_HEIGHT and player.pos[1] <= SCREEN_HEIGHT / 3 * 2:
                         player.jump()
+                
+                if event.key == pygame.K_SPACE:
+                    if is_clear == True:
+                        stage1_2.run()
+
 
 
                 if event.key == pygame.K_LEFT:
@@ -69,7 +86,9 @@ def run():
             
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                next_btn.check_click(event.pos)
+                if back_btn_rect.collidepoint(event.pos):
+                    running = False
+                    main.run()
                 print(event.pos)   
 
 
@@ -106,34 +125,31 @@ def run():
                     player.pos[1] = wall.h - player.size - 5
 
 
-        player_dead = False
-
 
         if player.pos[1] >= SCREEN_HEIGHT - player_size:
-            player_dead = True
-
-
-        if player_dead:
-            player.texture = pygame.image.load("imgs/player-dead-img.png")
-            time.sleep(0.5)
-            run()
+            player.dead(run)
+            
 #-------------------------------------------------wall collision
+            
+        # draw
+        screen.blit(back_btn, back_btn_rect.topleft)
+        door.draw(screen)
+        player.draw(screen)
+        for wall in walls:
+            wall.draw(screen)
+
+        screen.blit(arrow_up, (SCREEN_WIDTH / 2 - 32, SCREEN_HEIGHT / 4 * 3 - 64))
+        screen.blit(arrow_left, (SCREEN_WIDTH / 2 - 96, SCREEN_HEIGHT / 4 * 3))
+        screen.blit(arrow_right, (SCREEN_WIDTH / 2 + 32, SCREEN_HEIGHT / 4 * 3))
+
 
 
         # door collision 
         if player.pos[0] >= door.pos[0] and player.pos[0] <= door.pos[0] + door_size:
-            next_btn.draw(screen)
-            
-        # draw
-        player.draw(screen)
-        door.draw(screen)
-        for wall in walls:
-            wall.draw(screen)
-            
-        screen.blit(arrow_up, (SCREEN_WIDTH / 2 - 32, SCREEN_HEIGHT / 4 * 3 - 64))
-        screen.blit(arrow_left, (SCREEN_WIDTH / 2 - 96, SCREEN_HEIGHT / 4 * 3))
-        screen.blit(arrow_right, (SCREEN_WIDTH / 2 + 32, SCREEN_HEIGHT / 4 * 3))
-        
+            is_clear = True
+            screen.blit(text, text_rect.topleft)
+        else:
+            is_clear = False
 
         # update
         player.move_x()

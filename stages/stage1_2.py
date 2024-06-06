@@ -8,10 +8,14 @@ from classes.wall import Wall
 from classes.door import Door
 from classes.button import Button
 
-import stages.stage1_2 as stage1_2
+import stages.stage1_3 as stage1_3
 
 
 def run():
+    import main
+    back_btn = pygame.image.load("imgs/back.png")
+    back_btn_rect = back_btn.get_rect(center=(32, 32))
+    is_clear = False
 
 #------------------------------------------------- check is opened
 
@@ -36,18 +40,23 @@ def run():
     running = True
     ground = SCREEN_HEIGHT
 
-    player = Player(SCREEN_WIDTH / 3 - 30, SCREEN_HEIGHT / 2 - 45, player_size)
-    door = Door(910, SCREEN_HEIGHT / 2 - 50, door_size)   
-    next_btn = Button('Next Stage', SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT / 2 - 50, 70, 50, stage1_2.run)
+    player = Player(100, SCREEN_HEIGHT / 2 - 45, player_size)
+    door = Door(SCREEN_WIDTH / 4 * 3 + 30, SCREEN_HEIGHT / 2 - 50, door_size)   
     walls = [
-        Wall(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2, WHITE),
+        Wall(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, WHITE),
         Wall(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 100, SCREEN_HEIGHT / 2, WHITE),
-        Wall(SCREEN_WIDTH / 2 + 100, SCREEN_HEIGHT / 2, 250, SCREEN_HEIGHT / 2, WHITE)
+        Wall(SCREEN_WIDTH / 2 + 100, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2, WHITE)
         ]
+    font = pygame.font.Font(None, 30)
+    text = font.render("Press Spacebar to Move Next Stage", True, AQUA)
+    stage_num = font.render("1_2", True, AQUA)
+    text_rect = text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 7))
+    stage_num_rect = stage_num.get_rect(center=(SCREEN_WIDTH / 2, 30))
     
 
     while running:
         screen.fill(BLACK)
+        screen.blit(stage_num, stage_num_rect.center)
         
         # cheat
         # if ground == SCREEN_HEIGHT:
@@ -67,6 +76,10 @@ def run():
                     if ground != SCREEN_HEIGHT and player.pos[1] <= SCREEN_HEIGHT / 3 * 2:
                         player.jump()
 
+                if event.key == pygame.K_SPACE:
+                    if is_clear == True:
+                        stage1_3.run()
+
 
                 if event.key == pygame.K_LEFT:
                     player.dx -= 3
@@ -82,7 +95,9 @@ def run():
             
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                next_btn.check_click(event.pos)   
+                if back_btn_rect.collidepoint(event.pos):
+                    running = False
+                    main.run()
                 print(event.pos)
 
         
@@ -100,6 +115,11 @@ def run():
 #------------------------------------------------- event
 
         # falling down
+        if player.pos[0] > 660 and player.pos[0] < 690 and player.pos[1] > 370:
+            player.dx = 0
+
+        if player.pos[0] > 830 and player.pos[0] < 900 and player.pos[1] > 370:
+            player.dx = 0
 
 
         # walls move
@@ -111,8 +131,8 @@ def run():
                 walls[1].move_x()
         
         if player.pos[0] >= 760:
-            if walls[2].pos[0] >= 900:
-                walls[2].pos[0] = 900
+            if walls[2].pos[0] >= 895:
+                walls[2].pos[0] = 895
             else:
                 walls[2].dx += 0.8
                 walls[2].move_x()
@@ -140,18 +160,22 @@ def run():
             time.sleep(0.5)
             run()
 #-------------------------------------------------wall collision
+            
+
+        # draw
+        screen.blit(back_btn, back_btn_rect.topleft)
+        door.draw(screen)
+        player.draw(screen)
+        for wall in walls:
+            wall.draw(screen)
 
 
         # door collision 
         if player.pos[0] >= door.pos[0] and player.pos[0] <= door.pos[0] + door_size:
-            next_btn.draw(screen)
-            
-
-        # draw
-        player.draw(screen)
-        door.draw(screen)
-        for wall in walls:
-            wall.draw(screen)
+            is_clear = True
+            screen.blit(text, text_rect.topleft)
+        else:
+            is_clear = False
 
 
         # update

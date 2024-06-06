@@ -12,7 +12,7 @@ class Player:
         self.texture = pygame.image.load("imgs/player-img.png")
         # self.texture = pygame.transform.scale(self.texture, (size, size))
         self.rect = self.texture.get_rect(center=(self.pos[0], self.pos[1]))
-
+        self.is_dead = False
         # physics
         self.is_jump = False
         self.v = VELOCITY
@@ -29,7 +29,14 @@ class Player:
 
     def jump(self):
         self.is_jump = True
+    
+
+    def dead(self, reset):
+        self.is_dead == True
+        self.texture = pygame.image.load("imgs/player-dead-img.png")
         
+        reset()
+      
 
     def update(self, ground):
         if self.is_jump == True:
