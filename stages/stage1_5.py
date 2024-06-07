@@ -6,7 +6,6 @@ from variables import *
 from classes.player import Player
 from classes.wall import Wall
 from classes.door import Door
-from classes.button import Button
 
 import stages.stage2_1 as stage2_1
 
@@ -32,7 +31,7 @@ def run():
             with open('opened-stages.txt', 'a') as file:
                 file.write("5\n")
 
-#------------------------------------------------- check is opened
+#------------------------------------------------- /check is opened
 
     # setup
     pygame.init()
@@ -49,7 +48,7 @@ def run():
         ]
     font = pygame.font.Font(None, 30)
     text = font.render("Press Spacebar to Move Next Stage", True, AQUA)
-    stage_num = font.render("1-5", True, AQUA)
+    stage_num = font.render("1 - 5", True, AQUA)
     text_rect = text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 7))
     stage_num_rect = stage_num.get_rect(center=(SCREEN_WIDTH / 2, 30))
     
@@ -122,10 +121,10 @@ def run():
             walls[0].move_x()
         
 
-#------------------------------------------------- event
+#------------------------------------------------- /event
 
 
-#-------------------------------------------------wall collision
+#------------------------------------------------- wall collision
         for wall in walls:
             if player.rect.colliderect(wall.rect):
                 if player.is_jump == False:
@@ -135,7 +134,7 @@ def run():
         if player.pos[1] >= SCREEN_HEIGHT - player_size:
             player.dead(run)
             
-#-------------------------------------------------wall collision
+#------------------------------------------------- /wall collision
             
         # draw
         screen.blit(back_btn, back_btn_rect.topleft)

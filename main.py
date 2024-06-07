@@ -9,7 +9,14 @@ import stages.stage1_2 as stage1_2
 import stages.stage1_3 as stage1_3
 import stages.stage1_4 as stage1_4
 import stages.stage1_5 as stage1_5
+
 import stages.stage2_1 as stage2_1
+import stages.stage2_2 as stage2_2
+import stages.stage2_3 as stage2_3
+import stages.stage2_4 as stage2_4
+import stages.stage2_5 as stage2_5
+
+import stages.stage3_1 as stage3_1
 
 def run():
     # pygame setup
@@ -29,6 +36,8 @@ def run():
                 for i in line:
                     try:
                         if int(i):
+                            check_num.append(i)
+                        elif i == '0':
                             check_num.append(i)
                     except:
                         continue
@@ -54,7 +63,12 @@ def run():
         3: ('1 - 3', 300, 100, 50, 50, stage1_3.run),
         4: ('1 - 4', 400, 100, 50, 50, stage1_4.run),
         5: ('1 - 5', 500, 100, 50, 50, stage1_5.run),
-        6: ('2 - 1', 600, 100, 50, 50, stage2_1.run)
+        6: ('2 - 1', 600, 100, 50, 50, stage2_1.run),
+        7: ('2 - 2', 700, 100, 50, 50, stage2_2.run),
+        8: ('2 - 3', 800, 100, 50, 50, stage2_3.run),
+        9: ('2 - 4', 900, 100, 50, 50, stage2_4.run),
+        10: ('2 - 5', 1000, 100, 50, 50, stage2_5.run),
+        11: ('3 - 1', 1100, 100, 50, 50, stage3_1.run),
     }
 
     for stage in opened_stages:

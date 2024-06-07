@@ -6,6 +6,7 @@ class Wall:
         self.w = width
         self.h = height
         self.dx = 0
+        self.dy = 0
         self.rect = pygame.Rect(x, y, width, height)
         self.color = color
 
@@ -14,5 +15,10 @@ class Wall:
 
     def move_x(self):
         self.pos[0] += self.dx
+        self.rect.x = self.pos[0]
+        self.rect.y = self.pos[1]
+
+    def move_y(self):
+        self.pos[1] += self.dy
         self.rect.x = self.pos[0]
         self.rect.y = self.pos[1]
